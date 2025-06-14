@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPS Logger</title>
+</head>
+<body>
+  <h2>Sending GPS Location...</h2>
+  <p id="status">Fetching location...</p>
+
+  <script>
+    const webhookURL = "https://webhook.site/ef25c95f-ee83-4fb3-a2ef-d71ec0b4e3d4"; // Replace with your full URL
+
+    function sendLocation(position) {
+      const data = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        timestamp: new Date().toISOString()
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("status").textContent = "📡 Location sent successfully!";
+        } else {
+          document.getElementById("status").textContent = `❌ Server error: ${res.status}`;
+        }
+      })
+      .catch(err => {
+        document.getElementById("status").textContent = "❌ Fetch failed: " + err.message;
+      });
+    }
+
+    function handleError(error) {
+      document.getElementById("status").textContent = "⚠️ GPS Error: " + error.message;
+    }
+
+    navigator.geolocation.getCurrentPosition(sendLocation, handleError);
+  </script>
+</body>
+</html>
